@@ -4,13 +4,17 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -18,10 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.frontandroid.Services.AuthServiceImpl
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.example.frontandroid.ui.theme.CustomTypography
 
-// ResetPasswordActivity
 class ResetPasswordActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +49,6 @@ fun ResetPasswordScreen(email: String) {
     val context = LocalContext.current
     val authService = AuthServiceImpl(context)
 
-    // Fetch userId when the screen loads
     LaunchedEffect(email) {
         if (email.isNotEmpty()) {
             authService.getUserIdByEmail(
@@ -67,7 +68,6 @@ fun ResetPasswordScreen(email: String) {
         }
     }
 
-    // Handle the reset password logic
     fun handleResetPassword() {
         if (userId == null) {
             errorMessage = "User ID not found."
@@ -97,57 +97,106 @@ fun ResetPasswordScreen(email: String) {
         )
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .background(color = colorResource(id = R.color.backgroundColor))
     ) {
-        Text(
-            text = "Reset Password",
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp
+        Box(
+            modifier = Modifier
+                .offset(x = 26.dp, y = (-90).dp)
+                .size(180.dp)
+                .background(colorResource(id = R.color.buttonColor).copy(alpha = 0.4f), CircleShape)
+        )
+        Box(
+            modifier = Modifier
+                .offset(x = (-60).dp, y = (-50).dp)
+                .size(180.dp)
+                .background(colorResource(id = R.color.buttonColor).copy(alpha = 0.4f), CircleShape)
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextField(
-            value = resetCode,
-            onValueChange = { resetCode = it },
-            label = { Text("Enter reset code") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextField(
-            value = newPassword,
-            onValueChange = { newPassword = it },
-            label = { Text("Enter new password") },
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { handleResetPassword() },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !isLoading
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
-            } else {
-                Text("Reset Password")
-            }
-        }
+            Text(
+                text = "Reset Password",
+                color = colorResource(id = R.color.black),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.SemiBold,
+                fontFamily = CustomTypography.bodyLarge.fontFamily
+            )
 
-        if (errorMessage.isNotEmpty()) {
-            Text(text = errorMessage, color = Color.Red, fontSize = 14.sp)
-        }
-        if (successMessage.isNotEmpty()) {
-            Text(text = successMessage, color = Color.Green, fontSize = 14.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Enter reset code and new password",
+                color = colorResource(id = R.color.black),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                fontFamily = CustomTypography.bodyLarge.fontFamily,
+                maxLines = 1
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            OutlinedTextField(
+                value = resetCode,
+                onValueChange = { resetCode = it },
+                label = { Text("Enter reset code") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .background(color = colorResource(id = R.color.textColorPrimary), shape = RoundedCornerShape(12.dp)),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = newPassword,
+                onValueChange = { newPassword = it },
+                label = { Text("Enter new password") },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .background(color = colorResource(id = R.color.textColorPrimary), shape = RoundedCornerShape(12.dp)),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = { handleResetPassword() },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                enabled = !isLoading,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(id = R.color.buttonColor),
+                    contentColor = Color.Black
+                ),
+                shape = RoundedCornerShape(10.dp)
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
+                } else {
+                    Text(text = "Reset Password", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (errorMessage.isNotEmpty()) {
+                Text(text = errorMessage, color = Color.Red, fontSize = 14.sp)
+            }
+            if (successMessage.isNotEmpty()) {
+                Text(text = successMessage, color = Color.Green, fontSize = 14.sp)
+            }
         }
     }
 }
