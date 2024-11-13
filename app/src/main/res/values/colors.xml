@@ -1,0 +1,9 @@
+<resources>
+    <color name="backgroundColor">#FEF2E4</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="buttonColor">#4F3422</color>
+    <color name="inputFieldColor">#FFFFFF</color>
+    <color name="hintColor">#CCCCCC</color>
+    <color name="black">#000000</color>
+
+</resources>
